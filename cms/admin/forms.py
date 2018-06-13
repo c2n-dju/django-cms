@@ -17,6 +17,7 @@ from cms.apphook_pool import apphook_pool
 from cms.exceptions import PluginLimitReached
 from cms.extensions import extension_pool
 from cms.constants import PAGE_TYPES_ID, PUBLISHER_STATE_DIRTY, ROOT_USER_LEVEL
+from cms.forms.fields import PageSelectFormField
 from cms.forms.validators import validate_relative_url, validate_url_uniqueness
 from cms.forms.widgets import UserSelectAdminWidget, AppHookSelect, ApplicationConfigSelect
 from cms.models import (CMSPlugin, Page, PageType, PagePermission, PageUser, PageUserGroup, Title,
@@ -151,6 +152,10 @@ class AddPageForm(BasePageForm):
         ),
         required=False,
     )
+    source_draft = PageSelectFormField(
+        label=_(u'Copy from page'),
+        required=False,
+    )
     parent_node = forms.ModelChoiceField(
         queryset=TreeNode.objects.all(),
         required=False,
@@ -159,7 +164,7 @@ class AddPageForm(BasePageForm):
 
     class Meta:
         model = Page
-        fields = ['source']
+        fields = ['source', 'source_draft', ]
 
     def __init__(self, *args, **kwargs):
         super(AddPageForm, self).__init__(*args, **kwargs)
@@ -258,7 +263,11 @@ class AddPageForm(BasePageForm):
 
     def save(self, *args, **kwargs):
         source = self.cleaned_data.get('source')
+        source_draft = self.cleaned_data.get('source_draft')
         parent = self.cleaned_data.get('parent_node')
+
+        if not source and source_draft:
+            source = source_draft
 
         if source:
             new_page = self.from_source(source, parent=parent)
