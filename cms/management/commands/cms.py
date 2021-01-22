@@ -10,7 +10,7 @@ from .subcommands.tree import FixTreeCommand
 from .subcommands.uninstall import UninstallCommand
 from .subcommands.copy import CopyCommand
 from .subcommands.delete_orphaned_plugins import DeleteOrphanedPluginsCommand
-
+from .subcommands.titlepaths import CheckTitlePathsCommand
 
 class Command(SubcommandsCommand):
     command_name = 'cms'
@@ -20,6 +20,7 @@ class Command(SubcommandsCommand):
         ('delete-orphaned-plugins', DeleteOrphanedPluginsCommand),
         ('fix-tree', FixTreeCommand),
         ('list', ListCommand),
+        ('check-title-paths', CheckTitlePathsCommand),
         ('publisher-publish', PublishCommand),
         ('uninstall', UninstallCommand),
     ))
